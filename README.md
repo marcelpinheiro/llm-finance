@@ -142,9 +142,9 @@ The processing script expects PDFs in the `data/sec_filings/` directory with fil
 llm-finance/
 ├── data/
 │   ├── sec_filings/
-│   │   ├── AAPL_10K_2023.pdf
-│   │   ├── MSFT_10K_2023.pdf
-│   │   ├── GOOGL_10K_2023.pdf
+│   │   ├── AAPL_10K_2024.pdf
+│   │   ├── MSFT_10K_2024.pdf
+│   │   ├── GOOGL_10K_2024.pdf
 │   │   └── ...
 ```
 
