@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: finance
+    schema: finance
+    tables:
+      - name: companies
+      - name: financial_statements
+      - name: stock_prices
+      - name: documents
+      - name: document_embeddings

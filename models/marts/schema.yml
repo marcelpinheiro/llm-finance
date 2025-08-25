@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: dim_companies
+    description: "Dimension table for companies"
+    columns:
+      - name: company_id
+        description: "Primary key for the company"
+        tests:
+          - unique
+          - not_null
+      - name: symbol
+        description: "Stock symbol"
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: "Company name"
+        tests:
+          - not_null
+      - name: sector
+        description: "Company sector"
+      - name: industry
+        description: "Company industry"
+      - name: market_cap
+        description: "Market capitalization"
+  
+  - name: fct_financial_statements
+    description: "Fact table for financial statements"
+    columns:
+      - name: statement_id
+        description: "Primary key for the statement"
+        tests:
+          - unique
+          - not_null
+      - name: company_id
+        description: "Foreign key to dim_companies"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_companies')
+              field: company_id
+      - name: statement_type
+        description: "Type of financial statement"
+        tests:
+          - not_null
+      - name: fiscal_year
+        description: "Fiscal year"
+        tests:
+          - not_null
+      - name: fiscal_period
+        description: "Fiscal period"
+      - name: revenue
+        description: "Revenue"
+      - name: net_income
+        description: "Net income"
+      - name: total_assets
+        description: "Total assets"
+      - name: total_liabilities
+        description: "Total liabilities"
+      - name: shareholders_equity
+        description: "Shareholders equity"

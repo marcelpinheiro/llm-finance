@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  db:
+    image: ankane/pgvector:latest
+    container_name: llm_finance_db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-llm_finance}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  dbt:
+    build:
+      context: .
+      dockerfile: Dockerfile.dbt
+    container_name: llm_finance_dbt
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DBT_HOST: db
+      DBT_USER: ${POSTGRES_USER:-postgres}
+      DBT_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DBT_PORT: 5432
+      DBT_DBNAME: ${POSTGRES_DB:-llm_finance}
+      DB_HOST: db
+      DB_USER: ${POSTGRES_USER:-postgres}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB:-llm_finance}
+    volumes:
+      - ./models:/usr/app/models
+      - ./dbt_project.yml:/usr/app/dbt_project.yml
+      - ./profiles.yml:/root/.dbt/profiles.yml
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    container_name: llm_finance_streamlit
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8501:8501"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@db:5432/${POSTGRES_DB:-llm_finance}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DB_HOST=db
+      - DB_USER=${POSTGRES_USER:-postgres}
+      - DB_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB:-llm_finance}
+    volumes:
+      - ./src:/app/src
+      - ./streamlit_app.py:/app/streamlit_app.py
+      - ./embeddings.py:/app/embeddings.py
+      - ./configs:/app/configs
+      - ./data:/app/data
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
