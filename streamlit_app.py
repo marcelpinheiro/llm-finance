@@ -27,11 +27,11 @@ Ask questions about financial performance, risks, strategies, and more.
 # Sidebar with example queries
 st.sidebar.header("Example Queries")
 example_queries = [
-    "What was Apple's revenue in 2023?",
-    "What were Apple's main risks in 2023?",
+    "What was Apple's revenue in 2024?",
+    "What were Apple's main risks in 2024?",
     "Compare Tesla vs Microsoft revenue growth in the last 5 years.",
     # "Summarize ESG commitments of Amazon.",
-    "Which company had the highest profit margin in 2023?"
+    "Which company had the highest profit margin in 2024?"
 ]
 
 selected_example = st.sidebar.selectbox(
